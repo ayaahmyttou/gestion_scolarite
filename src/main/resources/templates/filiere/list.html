@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Liste des Filières')}"></head>
+<body>
+<nav th:replace="~{fragments/header :: navbar}"></nav>
+<div th:replace="~{fragments/header :: alerts}"></div>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="bi bi-diagram-3"></i> Liste des Filières
+        </h2>
+        <a th:href="@{/filieres/new}" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Nouvelle Filière
+        </a>
+    </div>
+
+    <!-- Message si aucune filière -->
+    <div th:if="${#lists.isEmpty(filieres)}" class="alert alert-info">
+        <i class="bi bi-info-circle"></i> Aucune filière trouvée.
+        <a th:href="@{/filieres/new}">Créer la première filière</a>
+    </div>
+
+    <!-- Cartes des filières -->
+    <div th:if="${!#lists.isEmpty(filieres)}" class="row">
+        <div th:each="filiere : ${filieres}" class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <span class="badge bg-light text-dark" th:text="${filiere.code}"></span>
+                        <span th:text="${filiere.nom}"></span>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">
+                        <i class="bi bi-people"></i>
+                        <strong th:text="${#lists.size(filiere.eleves)}"></strong> élève(s)
+                    </p>
+                    <p class="card-text">
+                        <i class="bi bi-journal-text"></i>
+                        <strong th:text="${#lists.size(filiere.cours)}"></strong> cours
+                    </p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <div class="d-flex justify-content-between">
+                        <a th:href="@{/filieres/{id}(id=${filiere.id})}"
+                           class="btn btn-sm btn-info">
+                            <i class="bi bi-eye"></i> Détails
+                        </a>
+                        <a th:href="@{/filieres/{id}/edit(id=${filiere.id})}"
+                           class="btn btn-sm btn-warning">
+                            <i class="bi bi-pencil"></i> Modifier
+                        </a>
+                        <a th:href="@{/filieres/{id}/delete(id=${filiere.id})}"
+                           class="btn btn-sm btn-danger"
+                           onclick="return confirm('Supprimer cette filière ?')">
+                            <i class="bi bi-trash"></i> Supprimer
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${!#lists.isEmpty(filieres)}" class="mt-3">
+        <p class="text-muted">
+            Total : <strong th:text="${#lists.size(filieres)}"></strong> filière(s)
+        </p>
+    </div>
+</div>
+
+<div th:replace="~{fragments/header :: scripts}"></div>
+</body>
+</html>

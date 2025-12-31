@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Détails Élève')}"></head>
+<body>
+<nav th:replace="~{fragments/header :: navbar}"></nav>
+<div th:replace="~{fragments/header :: alerts}"></div>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="bi bi-person-badge"></i>
+            Détails de l'Élève
+        </h2>
+        <div>
+            <a th:href="@{/eleves/{id}/edit(id=${eleve.id})}" class="btn btn-warning">
+                <i class="bi bi-pencil"></i> Modifier
+            </a>
+            <a th:href="@{/eleves}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Retour
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Informations personnelles -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-person"></i> Informations Personnelles
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless">
+                        <tr>
+                            <th width="40%">ID :</th>
+                            <td th:text="${eleve.id}"></td>
+                        </tr>
+                        <tr>
+                            <th>Nom :</th>
+                            <td><strong th:text="${eleve.nom}"></strong></td>
+                        </tr>
+                        <tr>
+                            <th>Prénom :</th>
+                            <td><strong th:text="${eleve.prenom}"></strong></td>
+                        </tr>
+                        <tr>
+                            <th>Nom Complet :</th>
+                            <td><strong th:text="${eleve.nomComplet}"></strong></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dossier administratif -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-file-earmark-text"></i> Dossier Administratif
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div th:if="${eleve.dossierAdministratif != null}">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th width="50%">N° Inscription :</th>
+                                <td>
+                                        <span class="badge bg-success fs-6"
+                                              th:text="${eleve.dossierAdministratif.numeroInscription}"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Date de création :</th>
+                                <td th:text="${#temporals.format(eleve.dossierAdministratif.dateCreation, 'dd/MM/yyyy')}"></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div th:unless="${eleve.dossierAdministratif != null}"
+                         class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        Aucun dossier administratif
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filière -->
+    <div class="card mb-4">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0">
+                <i class="bi bi-diagram-3"></i> Filière
+            </h5>
+        </div>
+        <div class="card-body">
+            <div th:if="${eleve.filiere != null}">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h6 class="mb-1">
+                            <span class="badge bg-info fs-6" th:text="${eleve.filiere.code}"></span>
+                            <span th:text="${eleve.filiere.nom}"></span>
+                        </h6>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <a th:href="@{/filieres/{id}(id=${eleve.filiere.id})}"
+                           class="btn btn-sm btn-info">
+                            <i class="bi bi-eye"></i> Voir la filière
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div th:unless="${eleve.filiere != null}" class="alert alert-warning mb-0">
+                <i class="bi bi-exclamation-triangle"></i>
+                Cet élève n'est affecté à aucune filière
+            </div>
+        </div>
+    </div>
+
+    <!-- Cours suivis -->
+    <div class="card">
+        <div class="card-header bg-warning">
+            <h5 class="mb-0">
+                <i class="bi bi-journal-text"></i> Cours Suivis
+            </h5>
+        </div>
+        <div class="card-body">
+            <!-- Liste des cours suivis -->
+            <div th:if="${!#lists.isEmpty(eleve.cours)}" class="mb-3">
+                <h6>Cours actuels :</h6>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Intitulé</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="cours : ${eleve.cours}">
+                            <td>
+                                <span class="badge bg-primary" th:text="${cours.code}"></span>
+                            </td>
+                            <td th:text="${cours.intitule}"></td>
+                            <td>
+                                <a th:href="@{/eleves/{eleveId}/desinscrire-cours/{coursId}(eleveId=${eleve.id}, coursId=${cours.id})}"
+                                   class="btn btn-sm btn-danger"
+                                   onclick="return confirm('Désinscrire de ce cours ?')">
+                                    <i class="bi bi-x-circle"></i> Désinscrire
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(eleve.cours)}" class="alert alert-info">
+                <i class="bi bi-info-circle"></i>
+                Cet élève n'est inscrit à aucun cours
+            </div>
+
+            <!-- Formulaire d'inscription à un cours -->
+            <div th:if="${coursDisponibles != null && !#lists.isEmpty(coursDisponibles)}">
+                <hr>
+                <h6>Inscrire à un nouveau cours :</h6>
+                <form th:action="@{/eleves/{id}/inscrire-cours(id=${eleve.id})}"
+                      method="post"
+                      class="row g-3">
+                    <div class="col-md-9">
+                        <select name="coursId" class="form-select" required>
+                            <option value="">-- Sélectionner un cours --</option>
+                            <option th:each="cours : ${coursDisponibles}"
+                                    th:value="${cours.id}"
+                                    th:text="${cours.code + ' - ' + cours.intitule}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-plus-circle"></i> Inscrire
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div th:if="${eleve.filiere == null}" class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle"></i>
+                L'élève doit d'abord être affecté à une filière pour pouvoir s'inscrire aux cours
+            </div>
+
+            <div th:if="${eleve.filiere != null && (coursDisponibles == null || #lists.isEmpty(coursDisponibles)) && #lists.isEmpty(eleve.cours)}"
+                 class="alert alert-info">
+                <i class="bi bi-info-circle"></i>
+                Aucun cours disponible dans cette filière
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/header :: scripts}"></div>
+</body>
+</html>

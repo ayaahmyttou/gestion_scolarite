@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head(${filiere.id != null ? 'Modifier Filière' : 'Nouvelle Filière'})}"></head>
+<body>
+<nav th:replace="~{fragments/header :: navbar}"></nav>
+<div th:replace="~{fragments/header :: alerts}"></div>
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-diagram-3"></i>
+                        <span th:text="${filiere.id != null ? 'Modifier Filière' : 'Nouvelle Filière'}"></span>
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form th:action="${filiere.id != null ? '/filieres/' + filiere.id : '/filieres'}"
+                          method="post"
+                          th:object="${filiere}">
+
+                        <div class="mb-3">
+                            <label for="code" class="form-label">Code *</label>
+                            <input type="text"
+                                   class="form-control"
+                                   id="code"
+                                   name="code"
+                                   th:field="*{code}"
+                                   placeholder="Ex: INFO, GESTION, COMPTA"
+                                   required>
+                            <div class="form-text">
+                                <i class="bi bi-info-circle"></i>
+                                Code unique de la filière (lettres majuscules recommandées)
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="nom" class="form-label">Nom *</label>
+                            <input type="text"
+                                   class="form-control"
+                                   id="nom"
+                                   name="nom"
+                                   th:field="*{nom}"
+                                   placeholder="Ex: Informatique, Gestion des Entreprises"
+                                   required>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="bi bi-lightbulb"></i>
+                            <strong>Astuce :</strong> Le code de la filière sera utilisé dans la génération
+                            du numéro d'inscription des élèves (format: CODE-ANNEE-ID)
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a th:href="@{/filieres}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Annuler
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle"></i>
+                                <span th:text="${filiere.id != null ? 'Mettre à jour' : 'Créer'}"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/header :: scripts}"></div>
+</body>
+</html>

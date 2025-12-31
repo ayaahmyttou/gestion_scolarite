@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head(${cours.id != null ? 'Modifier Cours' : 'Nouveau Cours'})}"></head>
+<body>
+<nav th:replace="~{fragments/header :: navbar}"></nav>
+<div th:replace="~{fragments/header :: alerts}"></div>
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-journal-text"></i>
+                        <span th:text="${cours.id != null ? 'Modifier Cours' : 'Nouveau Cours'}"></span>
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form th:action="${cours.id != null ? '/cours/' + cours.id : '/cours'}"
+                          method="post"
+                          th:object="${cours}">
+
+                        <div class="mb-3">
+                            <label for="code" class="form-label">Code du cours *</label>
+                            <input type="text"
+                                   class="form-control"
+                                   id="code"
+                                   name="code"
+                                   th:field="*{code}"
+                                   placeholder="Ex: MATH101, INFO205"
+                                   required>
+                            <div class="form-text">
+                                <i class="bi bi-info-circle"></i>
+                                Code unique du cours
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="intitule" class="form-label">Intitulé *</label>
+                            <input type="text"
+                                   class="form-control"
+                                   id="intitule"
+                                   name="intitule"
+                                   th:field="*{intitule}"
+                                   placeholder="Ex: Mathématiques Avancées, Programmation Java"
+                                   required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="filiereId" class="form-label">Filière *</label>
+                            <select class="form-select"
+                                    id="filiereId"
+                                    name="filiereId"
+                                    required>
+                                <option value="">-- Sélectionner une filière --</option>
+                                <option th:each="filiere : ${filieres}"
+                                        th:value="${filiere.id}"
+                                        th:text="${filiere.code + ' - ' + filiere.nom}"
+                                        th:selected="${cours.filiere != null && cours.filiere.id == filiere.id}">
+                                </option>
+                            </select>
+                            <div class="form-text">
+                                <i class="bi bi-info-circle"></i>
+                                La filière à laquelle ce cours appartient
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="bi bi-lightbulb"></i>
+                            <strong>Info :</strong> Seuls les élèves de la filière sélectionnée
+                            pourront s'inscrire à ce cours.
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a th:href="@{/cours}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Annuler
+                            </a>
+                            <button type="submit" class="btn btn-info text-white">
+                                <i class="bi bi-check-circle"></i>
+                                <span th:text="${cours.id != null ? 'Mettre à jour' : 'Créer'}"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/header :: scripts}"></div>
+</body>
+</html>

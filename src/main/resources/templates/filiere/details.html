@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Détails Filière')}"></head>
+<body>
+<nav th:replace="~{fragments/header :: navbar}"></nav>
+<div th:replace="~{fragments/header :: alerts}"></div>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="bi bi-diagram-3"></i>
+            Détails de la Filière
+        </h2>
+        <div>
+            <a th:href="@{/filieres/{id}/edit(id=${filiere.id})}" class="btn btn-warning">
+                <i class="bi bi-pencil"></i> Modifier
+            </a>
+            <a th:href="@{/filieres}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Retour
+            </a>
+        </div>
+    </div>
+
+    <!-- Informations de la filière -->
+    <div class="card mb-4">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">
+                <i class="bi bi-info-circle"></i> Informations
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table table-borderless">
+                        <tr>
+                            <th width="30%">ID :</th>
+                            <td th:text="${filiere.id}"></td>
+                        </tr>
+                        <tr>
+                            <th>Code :</th>
+                            <td>
+                                <span class="badge bg-success fs-6" th:text="${filiere.code}"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Nom :</th>
+                            <td><strong th:text="${filiere.nom}"></strong></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <div class="card bg-light">
+                        <div class="card-body text-center">
+                            <h6 class="text-muted">Statistiques</h6>
+                            <div class="row">
+                                <div class="col-6">
+                                    <h3 class="text-primary" th:text="${#lists.size(filiere.eleves)}"></h3>
+                                    <p class="mb-0">Élèves</p>
+                                </div>
+                                <div class="col-6">
+                                    <h3 class="text-info" th:text="${#lists.size(filiere.cours)}"></h3>
+                                    <p class="mb-0">Cours</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Liste des élèves -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-people"></i>
+                        Élèves de la filière
+                        <span class="badge bg-light text-dark" th:text="${#lists.size(filiere.eleves)}"></span>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div th:if="${!#lists.isEmpty(filiere.eleves)}">
+                        <div class="list-group">
+                            <a th:each="eleve : ${filiere.eleves}"
+                               th:href="@{/eleves/{id}(id=${eleve.id})}"
+                               class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                    <span>
+                                        <i class="bi bi-person"></i>
+                                        <span th:text="${eleve.nomComplet}"></span>
+                                    </span>
+                                <span class="badge bg-primary rounded-pill"
+                                      th:text="${eleve.dossierAdministratif != null ? eleve.dossierAdministratif.numeroInscription : ''}">
+                                    </span>
+                            </a>
+                        </div>
+                    </div>
+                    <div th:if="${#lists.isEmpty(filiere.eleves)}" class="alert alert-info mb-0">
+                        <i class="bi bi-info-circle"></i>
+                        Aucun élève dans cette filière
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Liste des cours -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-journal-text"></i>
+                        Cours de la filière
+                        <span class="badge bg-light text-dark" th:text="${#lists.size(filiere.cours)}"></span>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div th:if="${!#lists.isEmpty(filiere.cours)}">
+                        <div class="list-group">
+                            <a th:each="cours : ${filiere.cours}"
+                               th:href="@{/cours/{id}(id=${cours.id})}"
+                               class="list-group-item list-group-item-action">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="badge bg-primary" th:text="${cours.code}"></span>
+                                        <span th:text="${cours.intitule}"></span>
+                                    </div>
+                                    <span class="badge bg-secondary rounded-pill">
+                                            <i class="bi bi-people"></i>
+                                            <span th:text="${#lists.size(cours.eleves)}"></span>
+                                        </span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div th:if="${#lists.isEmpty(filiere.cours)}" class="alert alert-info mb-0">
+                        <i class="bi bi-info-circle"></i>
+                        Aucun cours dans cette filière
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a th:href="@{/cours/new}" class="btn btn-sm btn-info w-100">
+                        <i class="bi bi-plus-circle"></i> Ajouter un cours
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/header :: scripts}"></div>
+</body>
+</html>

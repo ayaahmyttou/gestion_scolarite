@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Liste des Élèves')}"></head>
+<body>
+<nav th:replace="~{fragments/header :: navbar}"></nav>
+<div th:replace="~{fragments/header :: alerts}"></div>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="bi bi-people"></i> Liste des Élèves
+        </h2>
+        <a th:href="@{/eleves/new}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Nouvel Élève
+        </a>
+    </div>
+
+    <!-- Barre de recherche -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form th:action="@{/eleves}" method="get" class="row g-3">
+                <div class="col-md-10">
+                    <input type="text" name="search" class="form-control"
+                           placeholder="Rechercher par nom ou prénom..."
+                           th:value="${search}">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search"></i> Rechercher
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Message si aucun élève -->
+    <div th:if="${#lists.isEmpty(eleves)}" class="alert alert-info">
+        <i class="bi bi-info-circle"></i> Aucun élève trouvé.
+        <a th:href="@{/eleves/new}">Créer le premier élève</a>
+    </div>
+
+    <!-- Tableau des élèves -->
+    <div th:if="${!#lists.isEmpty(eleves)}" class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Filière</th>
+                        <th>N° Inscription</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="eleve : ${eleves}">
+                        <td th:text="${eleve.id}"></td>
+                        <td th:text="${eleve.nom}"></td>
+                        <td th:text="${eleve.prenom}"></td>
+                        <td>
+                                    <span th:if="${eleve.filiere != null}"
+                                          class="badge bg-info"
+                                          th:text="${eleve.filiere.nom}"></span>
+                            <span th:unless="${eleve.filiere != null}"
+                                  class="text-muted">Non affecté</span>
+                        </td>
+                        <td>
+                                    <span th:if="${eleve.dossierAdministratif != null}"
+                                          class="badge bg-success"
+                                          th:text="${eleve.dossierAdministratif.numeroInscription}"></span>
+                        </td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a th:href="@{/eleves/{id}(id=${eleve.id})}"
+                                   class="btn btn-sm btn-info" title="Détails">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a th:href="@{/eleves/{id}/edit(id=${eleve.id})}"
+                                   class="btn btn-sm btn-warning" title="Modifier">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a th:href="@{/eleves/{id}/delete(id=${eleve.id})}"
+                                   class="btn btn-sm btn-danger"
+                                   title="Supprimer"
+                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet élève ?')">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-3">
+                <p class="text-muted">
+                    Total : <strong th:text="${#lists.size(eleves)}"></strong> élève(s)
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/header :: scripts}"></div>
+</body>
+</html>

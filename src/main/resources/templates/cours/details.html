@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Détails Cours')}"></head>
+<body>
+<nav th:replace="~{fragments/header :: navbar}"></nav>
+<div th:replace="~{fragments/header :: alerts}"></div>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="bi bi-journal-text"></i>
+            Détails du Cours
+        </h2>
+        <div>
+            <a th:href="@{/cours/{id}/edit(id=${cours.id})}" class="btn btn-warning">
+                <i class="bi bi-pencil"></i> Modifier
+            </a>
+            <a th:href="@{/cours}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Retour
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Informations du cours -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-info-circle"></i> Informations du Cours
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless">
+                        <tr>
+                            <th width="40%">ID :</th>
+                            <td th:text="${cours.id}"></td>
+                        </tr>
+                        <tr>
+                            <th>Code :</th>
+                            <td>
+                                <span class="badge bg-primary fs-6" th:text="${cours.code}"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Intitulé :</th>
+                            <td><strong th:text="${cours.intitule}"></strong></td>
+                        </tr>
+                        <tr>
+                            <th>Filière :</th>
+                            <td>
+                                <a th:href="@{/filieres/{id}(id=${cours.filiere.id})}"
+                                   class="badge bg-success text-decoration-none fs-6">
+                                    <span th:text="${cours.filiere.code}"></span> -
+                                    <span th:text="${cours.filiere.nom}"></span>
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistiques -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-warning">
+                    <h5 class="mb-0">
+                        <i class="bi bi-graph-up"></i> Statistiques
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center">
+                        <div class="display-4 text-primary mb-3" th:text="${#lists.size(cours.eleves)}"></div>
+                        <h5 class="text-muted">Élève(s) inscrit(s)</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Liste des élèves inscrits -->
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">
+                <i class="bi bi-people"></i>
+                Élèves Inscrits
+                <span class="badge bg-light text-dark" th:text="${#lists.size(cours.eleves)}"></span>
+            </h5>
+        </div>
+        <div class="card-body">
+            <div th:if="${!#lists.isEmpty(cours.eleves)}">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom Complet</th>
+                            <th>N° Inscription</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="eleve : ${cours.eleves}">
+                            <td th:text="${eleve.id}"></td>
+                            <td th:text="${eleve.nomComplet}"></td>
+                            <td>
+                                        <span class="badge bg-success"
+                                              th:text="${eleve.dossierAdministratif != null ? eleve.dossierAdministratif.numeroInscription : ''}">
+                                        </span>
+                            </td>
+                            <td>
+                                <a th:href="@{/eleves/{id}(id=${eleve.id})}"
+                                   class="btn btn-sm btn-info">
+                                    <i class="bi bi-eye"></i> Voir
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(cours.eleves)}" class="alert alert-info mb-0">
+                <i class="bi bi-info-circle"></i>
+                Aucun élève inscrit à ce cours pour le moment
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/header :: scripts}"></div>
+</body>
+</html>
